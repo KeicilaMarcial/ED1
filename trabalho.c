@@ -5,13 +5,14 @@
 
 int main (){
 lista *logs = inicializa();
-int opcao,a,b,c;
+int opcao;
+char id[15];
 char ip[15],data[255],mes[255], ano[255], hora[255], min[255] ,seg[255],usuario[255], metodo [255], caminho[255], http[255], status[255], status2[255], agente[255], teste[255];
 long bytes;
 FILE *arq = fopen("testelogs.txt","r");
 int resp=0;
-while(resp!=7){
- printf("1-Caregar logs\n2-Quantidade de Logs\n3-Buscar\n4-Excluir\n5-Quantidade de IPs Repetidos\n6-Periodo de maior utilizacaoo da rede\n7-SAIR\n");
+while(resp!=8){
+ printf("\n1-Caregar logs\n2-Quantidade de Logs\n3-Buscar\n4-Excluir\n5-Quantidade de IPs Repetidos\n6-Periodo de maior utilizacaoo da rede\n7-Exibe\n8-SAIR\n");
  scanf("%d", &resp);
 
      switch(resp){
@@ -36,23 +37,24 @@ while(resp!=7){
                  printf("\n");
             break;
             case 3:
-                 printf("Buscar");
+                     caracter(logs);
             break;
             case 4:
-                 printf("Exluir");
+                 logs= remover(logs);
             break;
             case 5:
-                printf("quantidade");
+                quantIpsRepeditos(logs);
             break;
              case 6:
                 printf("pico");
+                break;
+             case 7:
+                exibe(logs);
                 break;
             default:
                 break;
             }
     }
-	//exibe(logs);
-	//mostrarqntdelogs(logs);
 
 	return 0;
 }

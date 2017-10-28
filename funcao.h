@@ -1,6 +1,4 @@
-﻿//ola
-
-#include<stdio.h>
+﻿#include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 
@@ -73,13 +71,12 @@ void mostrarqntdelogs(lista *l){
 void exibe(lista *l){
     int i=0;
 	no *aux=l->fim;
-	if(aux==NULL) printf("\n Lista vazia!\n");
-
+	if(l->qnt==0) printf("\n Lista vazia!\n");
 	else{
 		printf("------------------------------------Lista-----------------------------------");
 		while(i<(l->qnt)){
 			printf("\nIP: %s \nUSUARIO: %s\nMETODO: %s \nDAta: %s\nCAMINHO: %s\n",aux->ip,aux->usuario,aux->metodo,
-			aux->data,aux->caminho);
+                                                                                    aux->data,aux->caminho);
 			aux = aux->ant;
             i++;
 		}
@@ -88,7 +85,48 @@ void exibe(lista *l){
 }
 
 
+void quantIpsRepeditos(lista *l){
+   no *aux1, *aux2;
+   for(aux1=l->inicio;aux1->prox!=NULL;aux1=aux1->prox){
+            for(aux2=aux1->prox;aux2->prox!=NULL;aux2=aux2->prox){
+                   // remover(aux2,aux1->ip);
+                    //fazer funcao de remover separado que tenha contador
+            }
+   }
+}
 
+void caracter(lista *l){
+    no *aux1=l->inicio;
+    int cont=15, i;
+    char data[20];
+        for(i=0;i<2;i++){
+           data[cont]=aux1->data;
+           cont++;
+        }
+        printf("%c\n",data);
+   }
+lista* remover(lista *l){
+    if(l->inicio==NULL)        return NULL;
+    else{
+        char id[15];
+        printf("Inserir IP: ");
+        scanf("%s",&id);
+        no *aux = l->inicio;
+        do{
+            if(strcmp (aux->ip,id)==0){
+                if(aux->ant==NULL){
+                    l->inicio=aux;
+                    l->inicio->ant=NULL;
+                }else{
+                    aux->ant->prox=aux->prox;
+                }
+            l->qnt--;
+            }
+        aux=aux->prox;
+        }while(aux!=NULL);
+        return l;
+    }
+}
 
 
 
