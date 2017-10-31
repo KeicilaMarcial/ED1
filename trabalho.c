@@ -4,57 +4,85 @@
 #include "funcao.h"
 
 int main (){
-lista *logs = inicializa();
-int opcao;
-char id[15];
-char ip[15],data[255],mes[255], ano[255], hora[255], min[255] ,seg[255],usuario[255], metodo [255], caminho[255], http[255], status[255], status2[255], agente[255], teste[255];
-long bytes;
-FILE *arq = fopen("testelogs.txt","r");
-int resp=0;
-while(resp!=8){
- printf("\n1-Caregar logs\n2-Quantidade de Logs\n3-Buscar\n4-Excluir\n5-Quantidade de IPs Repetidos\n6-Periodo de maior utilizacaoo da rede\n7-Exibe\n8-SAIR\n");
- scanf("%d", &resp);
 
-     switch(resp){
-            case 1:
-                if(arq==NULL){
-                    printf("Nao foi possivel abrir arquivo");
-                }else{
-                        printf("Arquivo carregado!\n");
-                    while(!feof(arq)){  // "!feof" enquanto nao chegar no fim do arquivo
+    lista *logs = inicializa();
 
-                         fscanf(arq, "%s %s %s %s %s",ip,usuario,metodo,data,caminho);
+    char ip[20], usuario[20],data[255],metodo[255],caminho[255],http[255],agente[255],teste[255],auxip[15],auxUsuario[15],auxCaminho[255];
+    int status,opcao,opcao2,resp;
+    long bytes;
 
-                        printf("\nIP: %s \nUSUARIO: %s\nMETODO: %s \nDAta: %s\nCAMINHO: %s\n",ip,usuario,metodo,data,caminho);
-                        logs = insere(logs, criano(ip,usuario,metodo,data,caminho));
-                        fgets(teste,255,arq);
+    FILE *arq = fopen("testelogs.txt","r");
+
+    do{
+    printf("\n===================Menu====================\n1-Carregar logs\n2-Quantidade de Logs\n3-Buscar\n4-Excluir\n5-Quantidade de IPs Repetidos\n6-Periodo de maior utilizacao da rede\n7-Exibe\n8-SAIR\n===========================================\n");
+    scanf("%d", &resp);
+    system("cls");
+         switch(resp){
+                case 1:
+                    if(arq==NULL){
+                        printf("Nao foi possivel abrir arquivo");
+                    }else{
+
+                            printf("Arquivo carregado!\n");
+                        while(!feof(arq)){  // "!feof" enquanto nao chegar no fim do arquivo
+
+                            fscanf(arq, "%s %*s %s [%s %*d] \"%s %s %[^\"]\" %d %ld  %*s \"%[^\"]\"" ,ip,usuario,data,metodo,caminho,http,&status,&bytes,agente);
+
+                           // printf("\nIP: %s \nUSUARIO: %s\nDAta: %s\nMetodo: %s\nCaminho: %s\nhttp: %s\nStatus: %d\nBytes: %ld\nAgente: %s\n",ip,usuario,data,metodo,caminho,http,status,bytes,agente);
+                            logs = insere(logs, criano(ip,usuario,data,metodo,caminho,http,status,bytes,agente));
+                            fgets(teste,255,arq);
+
+                        }
 
                     }
-                }
-            break;
-            case 2:
-                 mostrarqntdelogs(logs);
-                 printf("\n");
-            break;
-            case 3:
-                     caracter(logs);
-            break;
-            case 4:
-                 logs= remover(logs);
-            break;
-            case 5:
-                quantIpsRepeditos(logs);
-            break;
-             case 6:
-                printf("pico");
-                break;
-             case 7:
-                exibe(logs);
-                break;
-            default:
-                break;
-            }
-    }
 
+                break;
+                case 2:
+                     mostrarqntdelogs(logs);
+                     printf("\n");
+                break;
+                case 3:
+                    printf("\nBuscar por:\n1-IP\n2-Usuario\n3-Caminho\n");
+                    scanf("%d",&opcao2);
+                    switch(opcao2){
+                        case 1:
+                            printf("Inserir IP: ");
+                            scanf("%s",&auxip);
+                            buscaIP(logs,auxip);
+                        break;
+                       case 2:
+                            printf("Inserir Nome Usuario: ");
+                            fflush(stdin);
+                            gets(auxUsuario);
+                            buscaUsuario(logs,auxUsuario);
+                        break;
+                         case 3:
+                            printf("Inserir Caminho(Path): ");
+                            fflush(stdin);
+                            gets(auxCaminho);
+                            buscaCaminho(logs,auxCaminho);
+                        break;
+                    }
+                break;
+                case 4:
+                     logs= remover(logs);
+                break;
+                case 5:
+                     quantIpsRepeditos(logs);
+                     printf("\n");
+                     break;
+                break;
+                case 6:
+                    horariodefluxo(logs);
+                    printf("\n");
+                break;
+                case 7:
+                    exibe(logs);
+                    printf("\n");
+                break;
+                default:
+                break;
+        }
+    }while(resp!=8);
 	return 0;
 }
