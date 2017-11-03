@@ -7,8 +7,9 @@ int main (){
 
     lista *logs = inicializa();
 
-    char ip[20], usuario[20],data[255],metodo[255],caminho[255],http[255],agente[255],teste[255],auxip[15],auxUsuario[15],auxCaminho[255];
-    int status,opcao,opcao2,resp;
+    char ip[20], usuario[20],data[255],metodo[255],caminho[255],http[255],agente[255],teste[255];
+    char nomedoarquivo[255];
+    int status,opcao,resp;
     long bytes;
 
     FILE *arq = fopen("testelogs.txt","r");
@@ -19,6 +20,8 @@ int main (){
     system("cls");
          switch(resp){
                 case 1:
+                     //printf("Digite nome do arquivo (Ex: aqr.txt)\n: ");
+                    //scanf("%s",&nomedoarquivo);
                     if(arq==NULL){
                         printf("Nao foi possivel abrir arquivo");
                     }else{
@@ -37,36 +40,20 @@ int main (){
                     }
 
                 break;
+
                 case 2:
                      mostrarqntdelogs(logs);
                      printf("\n");
                 break;
+
                 case 3:
-                    printf("\nBuscar por:\n1-IP\n2-Usuario\n3-Caminho\n");
-                    scanf("%d",&opcao2);
-                    switch(opcao2){
-                        case 1:
-                            printf("Inserir IP: ");
-                            scanf("%s",&auxip);
-                            buscaIP(logs,auxip);
-                        break;
-                       case 2:
-                            printf("Inserir Nome Usuario: ");
-                            fflush(stdin);
-                            gets(auxUsuario);
-                            buscaUsuario(logs,auxUsuario);
-                        break;
-                         case 3:
-                            printf("Inserir Caminho(Path): ");
-                            fflush(stdin);
-                            gets(auxCaminho);
-                            buscaCaminho(logs,auxCaminho);
-                        break;
-                    }
+                    funcaobusca(logs);
                 break;
+
                 case 4:
                      logs= remover(logs);
                 break;
+
                 case 5:
                      quantIpsRepeditos(logs);
                      printf("\n");
@@ -77,7 +64,7 @@ int main (){
                     printf("\n");
                 break;
                 case 7:
-                    exibe(logs);
+                    exibelista(logs);
                     printf("\n");
                 break;
                 default:
