@@ -415,35 +415,75 @@ void funcaobusca(lista *l){
 
  void contopcao0(lista *l){
         no *aux;
-        int opcao,busca;
+        int opcao=0,busca=0,resp=0;
         char busca1[5];
         printf ("\n----------------Buscar---------------- \n");
         printf ("\n1 - Status  \n2 - Hora \n3 - Dia \n4 - Mes \n5 - Ano \n");
         scanf("%d",&opcao);
         switch(opcao){
         case 1:
-            printf("Digite Status: ");
+            printf("Digite Status: ( O status deve ser um numero inteiro) ");
             scanf("%d",&busca);
             buscaTipoInt(l,opcao,busca);
         break;
         case 2:
-            printf("Digite Hora: ");
+            printf("Digite Hora: ( O Hora deve ser um numero inteiro) ");
             scanf("%d",&busca);
             buscaTipoInt(l,opcao,busca);
         break;
         case 3:
-            printf("Digite Dia: ");
+            printf("Digite Dia:  ( O Dia deve ser um numero inteiro)");
             scanf("%d",&busca);
             buscaTipoInt(l,opcao,busca);
         break;
         case 4:
-            printf("Digite Mes: ");
-            scanf("%s",busca1);
+            printf("Digite Mes:\n1-Janeiro\n2-Fevereiro\n3-Marco\n4-Abril\n5-Maio\n6-Junho\n7-julho\n8-Agosto\n9-Setembro\n10-Outubro\n11-Novembro\n12-Dezembro\n");
+           // scanf("%s",busca1);
+           scanf("%d",&resp);
+           switch(resp){
+                case 1:
+                    strncpy(busca1, "Jan", sizeof(busca1));
+                    break;
+                case 2:
+                    strncpy(busca1, "Feb", sizeof(busca1));
+                    break;
+                case 3:
+                    strncpy(busca1, "Mar", sizeof(busca1));
+                    break;
+                case 4:
+                    strncpy(busca1, "Apr", sizeof(busca1));
+                    break;
+                case 5:
+                    strncpy(busca1, "May", sizeof(busca1));
+                    break;
+                case 6:
+                    strncpy(busca1, "Jun", sizeof(busca1));
+                    break;
+                case 7:
+                    strncpy(busca1, "Jul", sizeof(busca1));
+                    break;
+                case 8:
+                    strncpy(busca1, "Aug", sizeof(busca1));
+                    break;
+                case 9:
+                    strncpy(busca1, "Sep", sizeof(busca1));
+                    break;
+                case 10:
+                    strncpy(busca1, "Oct", sizeof(busca1));
+                    break;
+                case 11:
+                    strncpy(busca1, "Nov", sizeof(busca1));
+                    break;
+                case 12:
+                    strncpy(busca1, "Dec", sizeof(busca1));
+                    break;
+            }
+
             opcao =8;
             buscaTipoChar(l,opcao,busca1);
         break;
         case 5:
-            printf("Digite ano: ");
+            printf("Digite ano (somente numeros inteiros): ");
             scanf("%d",&busca);
             buscaTipoInt(l,opcao,busca);
         break;
