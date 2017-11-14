@@ -26,13 +26,6 @@ typedef struct lista{
 	int qnt;
 }lista;
 
-typedef struct r{
-    char ip;
-    int qnt;
-    struct r *prox;
-}r;
-
-
 //inicializa uma lista vazia e retorna a lista vazia
 lista *inicializa(){
 	lista *nova = (lista*)malloc(sizeof(lista));
@@ -41,6 +34,7 @@ lista *inicializa(){
 	nova->qnt = 0;
 	return nova;
 }
+
 //MILAGREEEEE
 int milagre(char *data){
     int u,d,hora;
@@ -113,7 +107,7 @@ lista *insere(lista *l, no *novo){  //recebe como parametro a lista e no já alo
 }
 
 int verificalistavazia(lista *l){
-    if(l->qnt!=0)        return 1; // se ==1 lista esta vazia
+    if(l->qnt!=0)  return 1; // se ==1 lista esta vazia
     else return 0; // se ==0 lista NAO esta vazia
 }
 
@@ -127,11 +121,27 @@ lista *desaloca(lista *l){
     return NULL;
 }
 
-void mostrarqntdelogs(lista *l){
-	if(l==NULL) printf("\n Lista vazia!\n");
-	else{
-		printf("\nPossuui %d logs.\n",l->qnt);
+lista *tamanhoLDE(lista *l, char nomedoarquivo[20]) {
+	int linha = 0;
+	char ch;
+    FILE * fp;
+	fp = fopen(nomedoarquivo, "r"); //abre o arquivo somente para leitura
+
+	if (fp != NULL) {
+		while (! feof(fp)) { //enquanto não chegar no final do arquivo
+			ch = fgetc(fp); //salva em uma variável ch cada caractere do arquivo
+
+			if (ch == '\n') //verifica se for quebra de linha e adiciona +1 no contador de linhas
+				linha++;
+		}
+		fclose(fp); //fecha o arquivo depois de ser usado
 	}
+    l->qnt = linha;
+	return l; //isso será o total de nós que a LDE poderá ter
+}
+
+void mostrarqntdelogs(lista *l){
+    printf("\nPossui %d logs.\n",l->qnt);
 }
 
 void printarNo(no *aux){
@@ -141,97 +151,66 @@ void printarNo(no *aux){
 
 void exibelista(lista *l){
     int i;
-	no *aux;
-	if(l->qnt==0) printf("\n Lista vazia!\n");
-	else{
-		printf("------------------------------------Lista-----------------------------------");
-		for(aux=l->inicio; aux->prox!=NULL; aux=aux->prox){
-                    printarNo(aux);
-        }
-	}
-}
-
-//remover um(uns) no(s) da lista por meio do ip
-lista* remover(lista *l){
-    if(l->inicio==NULL)        return NULL;
-    else{
-        char id[15];
-        printf("Inserir IP: ");
-        scanf("%s",&id);
-        no *aux = l->inicio;
-        do{
-            if(strcmp (aux->ip,id)==0){
-                if(aux->ant==NULL){
-                    l->inicio=aux;
-                    l->inicio->ant=NULL;
-                }else{
-                    aux->ant->prox=aux->prox; //ver para onde ->fim esta apontando
-                }
-            l->qnt--;
-            }
-        aux=aux->prox;
-        }while(aux!=NULL);
-        return l;
+	no *aux = l->inicio;
+    printf("------------------------------------Lista-----------------------------------");
+    for(i=0 ; i<l->qnt; i++){ //aux=l->inicio; aux->prox!=NULL; aux=aux->prox
+        printarNo(aux);
+        aux= aux->prox;
     }
 }
 
-r *inicializar(){
-	r *nova = (r*)malloc(sizeof(r));
-	nova = NULL;
-	return nova;
-}
 
-r *inserer(r* l, char *ip){
-    r *novo = (r*)malloc(sizeof(r));
-    novo->qnt=0;
-    strcmp(novo->ip,ip);
-
-    novo->prox =l;
-    return novo;
-}
-
-void exiber(r *l){
-    r *aux;
-    while(aux!=NULL){
-        printf("\nIP: %s         Repetições: %d",aux->ip,aux->qnt);
-        aux=aux->prox;
-    }
-}
-
-lista *removerepetido(lista*l,no*r){
-    if(r->prox!=NULL){
-        r->ant->prox=r->prox;
-        r->prox->ant= r->ant;
+lista *removedalista(lista *l, no *r){
+    if(r->ant == NULL){ //remove primeiro elemento
+        l->inicio = r->prox;
+        l->inicio->ant = NULL;
     }else{
-        l->fim = r->ant;
-        l->fim->prox=NULL;
+        if(r->prox == NULL){ //remove ultimo elemento
+            l->fim->ant->prox = NULL;
+            l->fim = r->ant;
+            //l->fim->prox = NULL;
+        }else{ //remove no meio
+            r->ant->prox = r ->prox ;
+            r->prox->ant = r ->ant ;
+        }
     }
+    l->qnt--;
+    return l;
+}
+//remover um(uns) no(s) da lista por meio do ip
+lista* removerchar(lista *l, char id[15]){
+    no *aux = l->inicio, *aux2;
+    while(aux!=NULL){
+        if(strcmp (aux->ip,id)==0){
+                removedalista(l,aux);
+        }
+        aux=aux->prox;
+    }
+
     return l;
 }
 
 void quantIpsRepeditos(lista *l){
-    if(l->inicio==NULL) printf("Lista vazia");
-    else{
-        int cont;
-        lista *aux;
-        aux = l;
-        no*aux1, *aux2, *aux3=l->fim;
-        for(aux1=aux->inicio;aux1!=NULL;aux1=aux1->prox){
-            cont =1;
-            for(aux2=aux->fim;aux2!=aux1;aux2=aux3){
-                aux3=aux2->ant;
-                if (strcmp(aux1->ip,aux2->ip)==0){
-                    aux= removerepetido(aux,aux2);
-                    cont ++;
+    int cont;
+    lista *aux;
+    aux = l;
+    no*aux1, *aux2, *aux3=l->fim;
+    for(aux1=aux->inicio;aux1!=NULL;aux1=aux1->prox){
+        cont =1;
+        for(aux2=aux->fim;aux2!=aux1;aux2=aux3){
+            aux3=aux2->ant;
+            if (strcmp(aux1->ip,aux2->ip)==0){
+                aux = removedalista(aux,aux2);
+                cont ++;
                 }
-            }
-            printf("\nIP: %s Repeticaos %d",aux1->ip,cont);
         }
+    printf("\nIP: %s Repeticaos %d",aux1->ip,cont);
     }
+    free(aux);
 }
 
 //funçao que é usada na  fncao fluxodehoario onde percorre o vetor e ver qal o maior elemento
-void maiorqntvetor(int*vet){
+void maiorqntvetor(int *vet){
     int i,maior,posicao,soma;
     float media;
     maior= vet[0];
@@ -245,7 +224,7 @@ void maiorqntvetor(int*vet){
             soma=soma+vet[i];
         }
     }
-    printf("\nO horario de maior fluxo e as %d com %d com total de acesso nesse horario",posicao+1,maior);
+    printf("\nO horario de maior fluxo e as %d com %d no total de acesso nesse horario",posicao+1,maior);
 
 }
 
@@ -257,6 +236,7 @@ void horariodefluxo(lista *l){
         i= aux->hora;
         vet[i-1]= (vet[i-1])+1;
     }
+    printf("------------Relatorio de horario-----------------\n");
     for(i=0;i<24;i++){
         printf("%d = %d\n",i+1,vet[i]);
     }
@@ -369,73 +349,68 @@ void buscaTipoChar(lista *l, int opcao, char busca[255]){
         if(cont==0) printf("\nNada foi encontrado\n");
 }
 
-
 void funcaobusca(lista *l){
     int opcao2;
     char busca[255];
 
-    if(verificalistavazia(l)==1){
-                        printf ("\n----------------Buscar---------------- \n");
-                        printf ("\n1 - IP \n");
-                        printf ("2 - Usuario \n");
-                        printf ("3 - Metodo \n");
-                        printf ("4 - Caminho(PATH) \n");
-                        printf ("5 - HTTP \n");
-                        printf ("6 - Agente \n");
-                        printf ("7 - Outros \n");
-                        printf ("\n-------------------------------------- \n");
+    printf ("\n----------------Buscar---------------- \n");
+    printf ("\n1 - IP \n");
+    printf ("2 - Usuario \n");
+    printf ("3 - Metodo \n");
+    printf ("4 - Caminho(PATH) \n");
+    printf ("5 - HTTP \n");
+    printf ("6 - Agente \n");
+    printf ("7 - Outros \n");
+    printf ("\n-------------------------------------- \n");
 
-
-                        scanf("%d",&opcao2);
-                        switch(opcao2){
-                        case 1:
-                                system("cls");
-                                printf("Inserir IP: ");
-                                scanf("%s",&busca);
-                                buscaTipoChar(l,opcao2,busca);
-                        break;
-                        case 2:
-                                system("cls");
-                                printf("Inserir Usuario: ");
-                                fflush(stdin);
-                                gets(busca);
-                                buscaTipoChar(l,opcao2,busca);
-                        break;
-                        case 3:
-                                system("cls");
-                                printf("Inserir Metodo: ");
-                                fflush(stdin);
-                                gets(busca);
-                                buscaTipoChar(l,opcao2,busca);
-                        break;
-                        case 4:
-                                system("cls");
-                                printf("Inserir Caminho(Path): ");
-                                fflush(stdin);
-                                gets(busca);
-                                buscaTipoChar(l,opcao2,busca);
-                        break;
-                        case 5:
-                                system("cls");
-                                printf("Inserir http: ");
-                                fflush(stdin);
-                                gets(busca);
-                                buscaTipoChar(l,opcao2,busca);
-                        break;
-                        case 6:
-                                system("cls");
-                                printf("Inserir Agente: ");
-                                fflush(stdin);
-                                gets(busca);
-                                buscaTipoChar(l,opcao2,busca);
-                        break;
-                        case 7:
-                                system("cls");
-                                contopcao0(l);
-                        break;
-
-                        }
-    }else printf("Lista vazia");
+    scanf("%d",&opcao2);
+    switch(opcao2){
+    case 1:
+        system("cls");
+            printf("Inserir IP: ");
+            scanf("%s",&busca);
+            buscaTipoChar(l,opcao2,busca);
+    break;
+    case 2:
+        system("cls");
+        printf("Inserir Usuario: ");
+        fflush(stdin);
+        gets(busca);
+        buscaTipoChar(l,opcao2,busca);
+    break;
+    case 3:
+        system("cls");
+        printf("Inserir Metodo: ");
+        fflush(stdin);
+        gets(busca);
+        buscaTipoChar(l,opcao2,busca);
+    break;
+    case 4:
+        system("cls");
+        printf("Inserir Caminho(Path): ");
+        fflush(stdin);
+        gets(busca);
+        buscaTipoChar(l,opcao2,busca);
+    break;
+    case 5:
+        system("cls");
+        printf("Inserir http: ");
+        fflush(stdin);
+        gets(busca);
+        buscaTipoChar(l,opcao2,busca);
+    break;
+    case 6:
+        system("cls");
+        printf("Inserir Agente: ");
+        fflush(stdin);
+        gets(busca);
+        buscaTipoChar(l,opcao2,busca);
+    break;
+        case 7:
+        system("cls");
+        contopcao0(l);
+    break;
+    }
 }
 
  void contopcao0(lista *l){
